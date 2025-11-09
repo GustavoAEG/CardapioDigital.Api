@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardapioDigital.Api", "CardapioDigital.Api\CardapioDigital.Api.csproj", "{4BCD93B4-2A54-478A-87F6-C80653D914E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardapioDigital.Domain", "CardapioDigital.Domain\CardapioDigital.Domain.csproj", "{C5BF2E7B-E523-41ED-B3EA-6BED52AE9053}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardapioDigital.Application", "CardapioDigital.Application\CardapioDigital.Application.csproj", "{CFC75061-33C9-418F-BEEA-FFB7148C40F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardapioDigital.Infrastructure", "CardapioDigital.Infrastructure\CardapioDigital.Infrastructure.csproj", "{3F9E8670-8587-4225-9022-2176341164D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4BCD93B4-2A54-478A-87F6-C80653D914E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BCD93B4-2A54-478A-87F6-C80653D914E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BCD93B4-2A54-478A-87F6-C80653D914E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BCD93B4-2A54-478A-87F6-C80653D914E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5BF2E7B-E523-41ED-B3EA-6BED52AE9053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5BF2E7B-E523-41ED-B3EA-6BED52AE9053}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5BF2E7B-E523-41ED-B3EA-6BED52AE9053}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5BF2E7B-E523-41ED-B3EA-6BED52AE9053}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFC75061-33C9-418F-BEEA-FFB7148C40F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFC75061-33C9-418F-BEEA-FFB7148C40F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFC75061-33C9-418F-BEEA-FFB7148C40F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFC75061-33C9-418F-BEEA-FFB7148C40F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F9E8670-8587-4225-9022-2176341164D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F9E8670-8587-4225-9022-2176341164D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F9E8670-8587-4225-9022-2176341164D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F9E8670-8587-4225-9022-2176341164D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BEBF680B-6782-45F9-99C4-1831F1FABA44}
+	EndGlobalSection
+EndGlobal
