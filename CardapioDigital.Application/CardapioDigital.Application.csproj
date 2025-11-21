@@ -18,9 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\" />
+    <Folder Include="Commands\Handlers\" />
     <Folder Include="DTOs\" />
     <Folder Include="Abstractions\" />
+    <Folder Include="Services\" />
+    <Folder Include="UseCases\" />
     <Folder Include="Queries\" />
   </ItemGroup>
 

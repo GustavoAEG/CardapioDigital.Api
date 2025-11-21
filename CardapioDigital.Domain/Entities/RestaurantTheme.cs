@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace CardapioDigital.Domain.Entities;
 
 public class RestaurantTheme
 {
+    [Key]
     public Guid RestaurantId { get; private set; }   // PK & FK
     public string? PrimaryColor { get; private set; }    // "#RRGGBB"
     public string? LogoUrl { get; private set; }
