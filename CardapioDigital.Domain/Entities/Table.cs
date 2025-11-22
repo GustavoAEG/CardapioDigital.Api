@@ -14,6 +14,7 @@ namespace CardapioDigital.Domain.Entities
         public byte[]? TokenHash { get; private set; }
         public bool IsActive { get; private set; } = true;
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+        public DateTime? TokenExpiresAt { get; private set; }
 
         private Table() { }
         public Table(Guid restaurantId, string code, byte[]? tokenHash = null)
@@ -22,7 +23,11 @@ namespace CardapioDigital.Domain.Entities
             if (string.IsNullOrWhiteSpace(code)) throw new ArgumentNullException(nameof(code));
             Code = code; TokenHash = tokenHash;
         }
-        public void SetTokenHash(byte[] hash) => TokenHash = hash;
+        public void SetTokenHash(byte[] hash, DateTime expiresAt)
+        {
+            TokenHash = hash;
+            TokenExpiresAt = expiresAt;
+        }
         public void Activate() => IsActive = true;
         public void Deactivate() => IsActive = false;
     }
