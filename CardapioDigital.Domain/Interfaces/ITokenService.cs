@@ -8,5 +8,8 @@ namespace CardapioDigital.Domain.Interfaces
 {
     public interface ITokenService
     {
+        string GenerateToken(int length = 32);
+        byte[] HashToken(string token);
     }
 }
+

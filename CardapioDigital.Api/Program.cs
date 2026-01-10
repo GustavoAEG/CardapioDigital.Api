@@ -1,5 +1,7 @@
 
+using CardapioDigital.Domain.Interfaces;
 using CardapioDigital.Infrastructure.Persistence;
+using CardapioDigital.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CardapioDigital.Api
@@ -17,6 +19,8 @@ namespace CardapioDigital.Api
                 options.UseSqlServer(conn));
 
             builder.Services.AddControllers();
+            builder.Services.AddScoped<ITokenService, TokenService>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
