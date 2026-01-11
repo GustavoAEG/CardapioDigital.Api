@@ -1,5 +1,4 @@
-﻿using CardapioDigital.Application.Services;
-using CardapioDigital.Domain.Interfaces;
+﻿using CardapioDigital.Domain.Interfaces;
 using CardapioDigital.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +13,11 @@ using System.Threading.Tasks;
 namespace CardapioDigital.Api.Controllers.Admin
 {
     [ApiController]
-    [Authorize] // JWT
     [Route("admin/restaurants/{rid:guid}/tables")]
     public class TablesController : ControllerBase
     {
         private readonly AppDbContext _db;
-        private readonly ITokenService _tokenService;
+        private readonly ITableTokenService _tokenService;
 
         public static class Roles
         {
@@ -34,7 +32,7 @@ namespace CardapioDigital.Api.Controllers.Admin
         }
 
 
-        public TablesController(AppDbContext db, ITokenService tokenService)
+        public TablesController(AppDbContext db, ITableTokenService tokenService)
         {
             _db = db;
             _tokenService = tokenService;
@@ -48,21 +46,21 @@ namespace CardapioDigital.Api.Controllers.Admin
             CancellationToken cancellationToken = default)
         {
             // 1) validar user logado
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-                return Forbid();
+            // DEV ONLY
+            var userId = Guid.Parse("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA");
+
 
             // 2) validar que user é admin do restaurante rid
-            var isAdmin = await _db.UserRoles.AnyAsync(ur =>
-                ur.UserId == userId &&
-                ur.RoleId == Roles.Admin, cancellationToken);
-            if (!isAdmin)
-                return Forbid();
+            //var isAdmin = await _db.UserRoles.AnyAsync(ur =>
+            //    ur.UserId == userId &&
+            //    ur.RoleId == Roles.Admin, cancellationToken);
+            //if (!isAdmin)
+            //    return Unauthorized();
 
-            // opcional: confirmar que o admin pertence ao restaurant (se sua model exigir)
-            var user = await _db.Users.FindAsync(new object[] { userId }, cancellationToken);
-            if (user == null || user.RestaurantId != rid)
-                return Forbid();
+            //// opcional: confirmar que o admin pertence ao restaurant (se sua model exigir)
+            //var user = await _db.Users.FindAsync(new object[] { userId }, cancellationToken);
+            //if (user == null || user.RestaurantId != rid)
+            //    return Unauthorized();
 
             // 3) carregar mesa
             var table = await _db.Tables
@@ -70,7 +68,7 @@ namespace CardapioDigital.Api.Controllers.Admin
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (table == null)
-                return NotFound();
+                return NotFound("Mesa Não Registrada no Banco de Dados");
 
             // 4) gerar token e hash
             var token = _tokenService.GenerateToken(32); // tamanho customizável

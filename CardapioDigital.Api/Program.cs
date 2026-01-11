@@ -1,7 +1,8 @@
 
+using CardapioDigital.Application.DTOs.CardapioDigital.Application.Settings;
+using CardapioDigital.Application.Services;
 using CardapioDigital.Domain.Interfaces;
 using CardapioDigital.Infrastructure.Persistence;
-using CardapioDigital.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CardapioDigital.Api
@@ -19,11 +20,16 @@ namespace CardapioDigital.Api
                 options.UseSqlServer(conn));
 
             builder.Services.AddControllers();
-            builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<ITableTokenService, TableTokenService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.Configure<JwtSettings>(
+            builder.Configuration.GetSection("Jwt"));
+
+            builder.Services.AddScoped<IJWTService, JwtService>();
 
             var app = builder.Build();
 
@@ -36,8 +42,8 @@ namespace CardapioDigital.Api
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication(); 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

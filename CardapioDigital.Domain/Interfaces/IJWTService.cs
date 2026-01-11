@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace CardapioDigital.Domain.Interfaces
 {
-    public interface ITokenService
+    public interface IJWTService
     {
-        string GenerateToken(int length = 32);
-        byte[] HashToken(string token);
+        string GenerateToken(Guid userId, Guid restaurantId, string role);
     }
 }
-

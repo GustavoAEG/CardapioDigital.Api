@@ -12,13 +12,13 @@ public class CheckoutNowHandler : IRequestHandler<CheckoutNowCommand, CheckoutNo
 {
     private readonly IOrderRepository _orders;
     private readonly IPaymentTokenRepository _paymentTokens;
-    private readonly ITokenService _tokenService;
+    private readonly ITableTokenService _tokenService;
     private readonly IConfiguration _cfg;
 
     public CheckoutNowHandler(
       IOrderRepository orders,
       IPaymentTokenRepository paymentTokens,
-      ITokenService tokenService,
+      ITableTokenService tokenService,
       IConfiguration cfg)
     {
         _orders = orders;
@@ -27,11 +27,20 @@ public class CheckoutNowHandler : IRequestHandler<CheckoutNowCommand, CheckoutNo
         _cfg = cfg;
     }
 
-    public async Task<CheckoutNowResult> Handle(CheckoutNowCommand request, CancellationToken cancellationToken)
+    public async Task<CheckoutNowResult> Handle(
+        CheckoutNowCommand request,
+        CancellationToken cancellationToken)
     {
         var order = await _orders.GetByIdAsync(request.OrderId, cancellationToken)
             ?? throw new KeyNotFoundException("Order not found.");
 
-        // ... continua normalmente
+        var paymentUrl = "https://sandbox.psp.com/checkout/" + order.Id;
+        var expiresAt = DateTime.UtcNow.AddMinutes(15);
+
+        return new CheckoutNowResult(
+            order.Id,
+            paymentUrl,
+            expiresAt
+        );
     }
 }

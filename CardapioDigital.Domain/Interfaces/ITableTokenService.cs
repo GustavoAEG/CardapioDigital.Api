@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CardapioDigital.Domain.Interfaces
+{
+    public interface ITableTokenService
+    {
+        string GenerateToken(int length = 32);
+        byte[] HashToken(string token);
+    }
+}
+
