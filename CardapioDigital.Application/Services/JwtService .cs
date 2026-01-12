@@ -1,4 +1,7 @@
-﻿using CardapioDigital.Domain.Interfaces;
+﻿using CardapioDigital.Application;
+using CardapioDigital.Application.DTOs.CardapioDigital.Application.Settings;
+using CardapioDigital.Domain.Entities;
+using CardapioDigital.Domain.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -7,9 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using CardapioDigital.Application;
 using System.Threading.Tasks;
-using CardapioDigital.Application.DTOs.CardapioDigital.Application.Settings;
 
 namespace CardapioDigital.Application.Services
 {
@@ -22,19 +23,28 @@ namespace CardapioDigital.Application.Services
             _settings = settings.Value;
         }
 
-        public string GenerateToken(Guid userId, Guid restaurantId, string role)
+        public string GenerateToken(
+    Guid userId,
+    Guid restaurantId,
+    IEnumerable<string> roles)
         {
-            var claims = new[]
+            var claims = new List<Claim>
+    {
+        new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+        new Claim("rid", restaurantId.ToString())
+    };
+
+            foreach (var role in roles)
             {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim("rid", restaurantId.ToString()),
-            new Claim(ClaimTypes.Role, role)
-        };
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_settings.Secret));
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var creds = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: _settings.Issuer,
@@ -46,6 +56,7 @@ namespace CardapioDigital.Application.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 
 }

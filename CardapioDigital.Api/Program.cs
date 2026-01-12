@@ -1,4 +1,5 @@
 
+using CardapioDigital.Api.Authorization;
 using CardapioDigital.Application.DTOs.CardapioDigital.Application.Settings;
 using CardapioDigital.Application.Services;
 using CardapioDigital.Domain.Interfaces;
@@ -42,7 +43,13 @@ namespace CardapioDigital.Api
 
             app.UseHttpsRedirection();
 
-            app.UseAuthentication(); 
+            app.UseAuthentication();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                Policies.AddPolicies(options);
+            });
+
             app.UseAuthorization();
 
             app.MapControllers();

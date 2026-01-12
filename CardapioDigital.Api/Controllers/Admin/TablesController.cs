@@ -1,11 +1,11 @@
-﻿using CardapioDigital.Domain.Interfaces;
+﻿using CardapioDigital.Api.Authorization;
+using CardapioDigital.Domain.Interfaces;
 using CardapioDigital.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
 using System;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,23 +14,11 @@ namespace CardapioDigital.Api.Controllers.Admin
 {
     [ApiController]
     [Route("admin/restaurants/{rid:guid}/tables")]
+    [Authorize(Policy = Policies.RequireRestaurantAdmin)]
     public class TablesController : ControllerBase
     {
         private readonly AppDbContext _db;
         private readonly ITableTokenService _tokenService;
-
-        public static class Roles
-        {
-            public static readonly Guid Admin =
-                Guid.Parse("11111111-1111-1111-1111-111111111111");
-
-            public static readonly Guid Waiter =
-                Guid.Parse("22222222-2222-2222-2222-222222222222");
-
-            public static readonly Guid Kitchen =
-                Guid.Parse("33333333-3333-3333-3333-333333333333");
-        }
-
 
         public TablesController(AppDbContext db, ITableTokenService tokenService)
         {
@@ -42,63 +30,51 @@ namespace CardapioDigital.Api.Controllers.Admin
         public async Task<IActionResult> RotateToken(
             Guid rid,
             Guid tid,
-            [FromQuery] bool returnQrImage = false, // opcional: ?returnQrImage=true
+            [FromQuery] bool returnQrImage = false,
             CancellationToken cancellationToken = default)
         {
-            // 1) validar user logado
-            // DEV ONLY
-            var userId = Guid.Parse("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA");
+            // 1️⃣ pegar rid do token
+            var tokenRestaurantId = User.FindFirstValue("rid");
 
+            if (tokenRestaurantId == null || tokenRestaurantId != rid.ToString())
+                return Forbid(); // token não pertence a esse restaurante
 
-            // 2) validar que user é admin do restaurante rid
-            //var isAdmin = await _db.UserRoles.AnyAsync(ur =>
-            //    ur.UserId == userId &&
-            //    ur.RoleId == Roles.Admin, cancellationToken);
-            //if (!isAdmin)
-            //    return Unauthorized();
-
-            //// opcional: confirmar que o admin pertence ao restaurant (se sua model exigir)
-            //var user = await _db.Users.FindAsync(new object[] { userId }, cancellationToken);
-            //if (user == null || user.RestaurantId != rid)
-            //    return Unauthorized();
-
-            // 3) carregar mesa
+            // 2️⃣ carregar mesa
             var table = await _db.Tables
-                .Where(t => t.Id == tid && t.RestaurantId == rid)
-                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(
+                    t => t.Id == tid && t.RestaurantId == rid,
+                    cancellationToken
+                );
 
             if (table == null)
-                return NotFound("Mesa Não Registrada no Banco de Dados");
+                return NotFound("Mesa não registrada neste restaurante.");
 
-            // 4) gerar token e hash
-            var token = _tokenService.GenerateToken(32); // tamanho customizável
+            // 3️⃣ gerar token da mesa
+            var token = _tokenService.GenerateToken(32);
             var hash = _tokenService.HashToken(token);
             var expiresAt = DateTime.UtcNow.AddDays(30);
 
-            // 5) aplicar no aggregate
             table.SetTokenHash(hash, expiresAt);
             await _db.SaveChangesAsync(cancellationToken);
 
-            // 6) montar url segura (só retorna para admin)
-            var qrUrl = $"https://app.yoursaas.com/public/menu?rid={rid}&tid={tid}&t={token}";
+            // 4️⃣ gerar URL do QR
+            var qrUrl =
+                $"https://app.yoursaas.com/public/menu?rid={rid}&tid={tid}&t={token}";
 
-            // 7) opcional: gerar PNG base64 do QR
+            // 5️⃣ QR opcional
             string? qrBase64 = null;
             if (returnQrImage)
             {
                 using var qrGenerator = new QRCodeGenerator();
                 using var data = qrGenerator.CreateQrCode(qrUrl, QRCodeGenerator.ECCLevel.Q);
                 using var qrCode = new PngByteQRCode(data);
-                var pngBytes = qrCode.GetGraphic(20);
-                qrBase64 = Convert.ToBase64String(pngBytes);
+                qrBase64 = Convert.ToBase64String(qrCode.GetGraphic(20));
             }
 
-            // 8) retornar token e url (token só para admin)
             return Ok(new
             {
-                token,
                 qrUrl,
-                qrBase64 // null se não foi pedido
+                qrBase64
             });
         }
     }

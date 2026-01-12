@@ -8,6 +8,6 @@ namespace CardapioDigital.Domain.Interfaces
 {
     public interface IJWTService
     {
-        string GenerateToken(Guid userId, Guid restaurantId, string role);
+        string GenerateToken(Guid userId, Guid restaurantId, IEnumerable<string> roles);
     }
 }
