@@ -32,6 +32,13 @@ namespace CardapioDigital.Api
 
             builder.Services.AddScoped<IJWTService, JwtService>();
 
+            builder.Services.AddScoped<IPasswordService, PasswordService>();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                Policies.AddPolicies(options);
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -45,10 +52,7 @@ namespace CardapioDigital.Api
 
             app.UseAuthentication();
 
-            builder.Services.AddAuthorization(options =>
-            {
-                Policies.AddPolicies(options);
-            });
+         
 
             app.UseAuthorization();
 

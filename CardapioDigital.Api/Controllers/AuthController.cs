@@ -1,4 +1,5 @@
 ﻿using CardapioDigital.Application.DTOs;
+using CardapioDigital.Domain.Entities;
 using CardapioDigital.Domain.Interfaces;
 using CardapioDigital.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace CardapioDigital.Api.Controllers
     {
         private readonly AppDbContext _db;
         private readonly IJWTService _jwt;
+        private readonly IPasswordService _passwordService;
 
-        public AuthController(AppDbContext db, IJWTService jwt)
+        public AuthController(AppDbContext db, IJWTService jwt,IPasswordService passwordService)
         {
             _db = db;
             _jwt = jwt;
+            _passwordService = passwordService;
         }
 
         [HttpPost("login")]
@@ -52,6 +55,26 @@ namespace CardapioDigital.Api.Controllers
                 DateTime.UtcNow.AddMinutes(60)
             ));
         }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterRequest request)
+        {
+            var hash = _passwordService.Hash(request.Password);
+
+            var user = new User(
+                request.RestaurantID,
+                request.RestaurantName,
+                request.Email,
+                hash
+            );
+
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
 
     }
 

@@ -12,12 +12,12 @@ public class User
     public Guid RestaurantId { get; private set; }
     public string Name { get; private set; }
     public string Email { get; private set; }
-    public byte[] PasswordHash { get; private set; }
+    public string PasswordHash { get; private set; }
     public bool IsActive { get; private set; } = true;
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
     private User() { }
-    public User(Guid restaurantId, string name, string email, byte[] passwordHash)
+    public User(Guid restaurantId, string name, string email, string passwordHash)
     {
         RestaurantId = restaurantId;
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
